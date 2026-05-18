@@ -1,4 +1,4 @@
-const CLIENT_ID = "43626404968-k431e5k2u7vo9ivjo6t7t4lht47pbqjm.apps.googleusercontent.com";
+const CLIENT_ID = "695393903745-dvnfb0guht0a1hltulv27ljh5caf2544.apps.googleusercontent.com";
 
 const SCOPES =
   "https://www.googleapis.com/auth/calendar";
