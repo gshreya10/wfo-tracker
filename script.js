@@ -110,9 +110,12 @@ async function initializeGapiClient() {
 
   gapiInited = true;
 
-  tryRestoreCachedSession();
+  const restoredFromCache =
+    await tryRestoreCachedSession();
 
-  maybeAutoLogin();
+  if (!restoredFromCache) {
+    maybeAutoLogin();
+  }
 }
 
 function gapiLoaded() {
@@ -295,7 +298,7 @@ async function tryRestoreCachedSession() {
     sessionRestored ||
     localStorage.getItem(AUTO_LOGIN_KEY) !== "true"
   ) {
-    return;
+    return false;
   }
 
   cachedSessionAttempted = true;
@@ -304,7 +307,7 @@ async function tryRestoreCachedSession() {
     getPersistedAccessToken();
 
   if (!accessToken) {
-    return;
+    return false;
   }
 
   loginStateEl.innerText =
@@ -317,6 +320,7 @@ async function tryRestoreCachedSession() {
   try {
     await listCalendars();
     sessionRestored = true;
+    return true;
   } catch (error) {
     console.error(
       "Cached session restore failed:",
@@ -325,6 +329,7 @@ async function tryRestoreCachedSession() {
 
     clearPersistedAccessToken();
     showLoginApp();
+    return false;
   }
 }
 
