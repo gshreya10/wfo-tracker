@@ -257,6 +257,76 @@ function getDisplayDate(dateString) {
       year: "numeric",
     });
 }
+git -c credential.helper= push origin maingit -c credential.helper= push origin main
+function isCompactCalendarLayout() {
+
+  return window.matchMedia("(max-width: 480px)").matches;
+}
+
+function getCalendarStatusLabel(displayStatus, eventStatus) {
+
+  const compactLayout =
+    isCompactCalendarLayout();
+
+  if (displayStatus === "WFH") {
+    return compactLayout ? "WFH" : "Home";
+  }
+
+  if (displayStatus === "WFO") {
+    return compactLayout ? "WFO" : "Office";
+  }
+
+  if (displayStatus === "WORKCATION") {
+    return compactLayout ? "WC" : "Workcation";
+  }
+
+  if (displayStatus === "HOLIDAY") {
+
+    const holidayName =
+      getHolidayName(eventStatus);
+
+    if (!holidayName) {
+      return compactLayout ? "H" : "Holiday";
+    }
+
+    return compactLayout ? "H" : holidayName;
+  }
+
+  if (displayStatus === "LEAVE_1") {
+    return compactLayout ? "L" : "Leave";
+  }
+
+  return "";
+}
+
+function getCalendarStatusAriaLabel(displayStatus, eventStatus) {
+
+  if (displayStatus === "WFH") {
+    return "Home";
+  }
+
+  if (displayStatus === "WFO") {
+    return "Office";
+  }
+
+  if (displayStatus === "WORKCATION") {
+    return "Workcation";
+  }
+
+  if (displayStatus === "HOLIDAY") {
+
+    const holidayName =
+      getHolidayName(eventStatus);
+
+    return holidayName || "Holiday";
+  }
+
+  if (displayStatus === "LEAVE_1") {
+    return "Leave";
+  }
+
+  return "";
+}
 
 function isCompactCalendarLayout() {
 

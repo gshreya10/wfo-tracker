@@ -601,10 +601,6 @@ button {
     min-height: clamp(56px, 13.5vw, 62px);
     border-radius: 8px;
     padding: 6px 4px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     min-width: 0;
   }
 
@@ -615,12 +611,67 @@ button {
   .date-number {
     font-size: clamp(10px, 2.3vw, 12px);
     font-weight: 600;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    line-height: 1;
+    z-index: 1;
   }
+
+  /* Laptop view: compact calendar and fonts, keep day label as desktop */
+  @media (max-width: 1024px) and (min-width: 481px) {
+    #calendar {
+      gap: 6px;
+      padding: 10px;
+      border-radius: 14px;
+    }
+    .day {
+      min-height: 70px;
+      border-radius: 8px;
+      padding: 10px 4px 6px 4px;
+      min-width: 0;
+    }
+    .date-number {
+      font-size: 13px;
+      top: 7px;
+      left: 8px;
+    }
+    .status-label {
+      font-size: 11px;
+      bottom: 7px;
+    }
+    .calendar-header h2 {
+      font-size: 20px;
+    }
+    .day-name {
+      font-size: 14px;
+      height: 28px;
+    }
+  }
+
+    /* Fix overlap and improve mobile layout */
+    @media (max-width: 480px) {
+      .day {
+        padding-top: 22px;
+        min-height: 70px;
+      }
+      .date-number {
+        font-size: 11px;
+        top: 6px;
+        left: 8px;
+      }
+      .status-label {
+        font-size: 9px;
+        bottom: 6px;
+      }
+    }
 
   .status-label {
     font-size: clamp(7px, 1.85vw, 9px);
     line-height: 1;
-    margin-top: 1px;
+    top: auto;
+    bottom: 5px;
+    transform: translateX(-50%);
     padding: 0 2px;
   }
 
@@ -682,12 +733,18 @@ button {
     padding: 4px;
   }
 
-  .stats-grid {
-    grid-template-columns: 1fr;
+  .date-number {
+    top: 4px;
+    left: 4px;
   }
 
   .status-label {
+    bottom: 4px;
     font-size: 7px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
 }
 
