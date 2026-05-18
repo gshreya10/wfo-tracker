@@ -32,6 +32,8 @@ body {
   font-family: Arial, sans-serif;
   font-size: clamp(0.9375rem, 0.2vw + 0.9rem, 1rem);
   line-height: 1.4;
+  display: grid;
+  grid-template-rows: 1fr auto;
   background:
     linear-gradient(
       180deg,
@@ -45,8 +47,10 @@ body {
     max(var(--container-gutter), env(safe-area-inset-right))
     max(var(--container-gutter), env(safe-area-inset-bottom))
     max(var(--container-gutter), env(safe-area-inset-left));
+  padding-bottom: max(6px, env(safe-area-inset-bottom));
   color: #1f252b;
   min-height: 100vh;
+  min-height: 100dvh;
   min-height: -webkit-fill-available;
   -webkit-text-size-adjust: 100%;
 }
@@ -58,13 +62,34 @@ body {
 .container {
   width: min(100%, var(--container-max));
   margin-inline: auto;
+  padding-bottom: clamp(7rem, 16vh, 9.5rem);
 }
 
 .legal-links {
-  margin: var(--space-3) 0 var(--space-1);
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0.55rem max(10px, var(--container-gutter)) max(6px, env(safe-area-inset-bottom));
+  background: var(--panel-bg);
+  border-top: 1px solid var(--panel-border);
+  border-radius: 0;
   text-align: center;
   color: #5f574e;
   font-size: clamp(0.78rem, 0.45vw + 0.68rem, 0.92rem);
+  z-index: 20;
+}
+
+.legal-links-nav {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  margin-top: 0.4rem;
+  padding-top: 0;
+  border-top: none;
+  font-size: clamp(0.68rem, 0.32vw + 0.58rem, 0.8rem);
 }
 
 .legal-links a {
@@ -102,12 +127,13 @@ button {
 }
 
 .public-info {
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-lg);
-  padding: clamp(0.875rem, 2.2vw, 1.25rem);
-  margin-top: var(--space-2);
-  color: #3e372f;
+  max-width: min(900px, calc(100% - 24px));
+  margin: 0.55rem auto 0;
+  color: #5a524a;
+  font-size: inherit;
+  line-height: 1.35;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid var(--panel-border);
 }
 
 .public-info h2 {
@@ -116,8 +142,8 @@ button {
 }
 
 .public-info p {
-  margin: 0.45rem 0;
-  font-size: clamp(0.82rem, 0.45vw + 0.72rem, 0.95rem);
+  margin: 0;
+  font-size: inherit;
 }
 
 .public-info ul {
