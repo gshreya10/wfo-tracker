@@ -257,7 +257,7 @@ function getDisplayDate(dateString) {
       year: "numeric",
     });
 }
-git -c credential.helper= push origin maingit -c credential.helper= push origin main
+
 function isCompactCalendarLayout() {
 
   return window.matchMedia("(max-width: 480px)").matches;
