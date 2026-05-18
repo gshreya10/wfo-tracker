@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+
+  <meta
+    name="theme-color"
+    content="#f3eee7"
+  />
+
+  <link
+    rel="manifest"
+    href="manifest.json"
+  />
+
+  <title>WFO Tracker</title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+  <script
+    src="https://accounts.google.com/gsi/client"
+    async
+    defer
+  ></script>
+
+  <script
+    src="https://apis.google.com/js/api.js"
+  ></script>
+
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>WFO Tracker</h1>
+
+    <div
+      id="g_id_onload"
+      data-client_id="43626404968-k431e5k2u7vo9ivjo6t7t4lht47pbqjm.apps.googleusercontent.com"
+      data-context="signin"
+      data-ux_mode="popup"
+      data-callback="handleCredentialResponse"
+      data-auto_prompt="false"
+    ></div>
+
+    <div
+      id="googleSignIn"
+      class="g_id_signin"
+      data-type="standard"
+      data-size="large"
+      data-theme="outline"
+      data-text="sign_in_with"
+      data-shape="rectangular"
+      data-logo_alignment="left"
+    ></div>
+
+    <div
+      id="loginState"
+      class="login-state"
+    >
+      <p>
+        Sign in to load your private WFO calendar and projection.
+      </p>
+    </div>
+
+    <div
+      id="trackerApp"
+      class="hidden"
+    >
+
+      <div class="stats-card">
+
+        <div class="projection-header">
+
+          <div>
+
+            <p class="projection-label">
+              Office Target
+            </p>
+
+            <h2 id="projectionStatus">
+              Loading
+            </h2>
+
+          </div>
+
+          <div
+            id="wfoPercent"
+            class="projection-percent"
+          >
+            0%
+          </div>
+
+        </div>
+
+        <div class="progress-track">
+
+          <div
+            id="progressFill"
+            class="progress-fill"
+          ></div>
+
+          <div class="target-marker"></div>
+
+        </div>
+
+        <div id="projectionMessage"></div>
+
+        <div
+          id="statsText"
+          class="stats-grid"
+        ></div>
+
+      </div>
+
+      <div class="calendar-header">
+
+        <button
+          id="prevMonth"
+          type="button"
+          aria-label="Previous month"
+        >
+          ←
+        </button>
+
+        <h2 id="monthYear"></h2>
+
+        <button
+          id="nextMonth"
+          type="button"
+          aria-label="Next month"
+        >
+          →
+        </button>
+
+      </div>
+
+      <div id="calendar"></div>
+
+      <button
+        id="logoutBtn"
+        type="button"
+        class="logout-button"
+      >
+        Logout
+      </button>
+      
+    </div>
+
+  </div>
+
+  <div
+    id="popupOverlay"
+    class="popup-overlay hidden"
+  >
+
+    <div
+      class="popup"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="popupTitle"
+    >
+
+      <button
+        id="closePopup"
+        class="popup-close"
+        aria-label="Close"
+      >
+        ×
+      </button>
+
+      <h3 id="popupTitle">
+        Update Day Status
+      </h3>
+
+      <p id="popupDate"></p>
+
+      <input
+        id="statusSelect"
+        type="hidden"
+        value=""
+      />
+
+      <div
+        id="statusOptions"
+        class="status-options"
+      >
+
+        <button
+          type="button"
+          class="status-option"
+          data-status=""
+        >
+          Home
+        </button>
+
+        <button
+          type="button"
+          class="status-option"
+          data-status="WFO"
+        >
+          Office
+        </button>
+
+        <button
+          type="button"
+          class="status-option"
+          data-status="WORKCATION"
+        >
+          Workcation
+        </button>
+
+        <button
+          type="button"
+          class="status-option"
+          data-status="LEAVE_1"
+        >
+          Full Leave
+        </button>
+
+        <button
+          type="button"
+          class="status-option"
+          data-status="LEAVE_0.5_WFO"
+        >
+          Half Leave + Office
+        </button>
+
+        <button
+          type="button"
+          class="status-option"
+          data-status="LEAVE_0.5_WFH"
+        >
+          Half Leave + Home
+        </button>
+
+        <button
+          type="button"
+          class="status-option"
+          data-status="HOLIDAY"
+        >
+          Holiday
+        </button>
+
+      </div>
+
+      <div
+        id="holidayNameField"
+        class="holiday-name-field hidden"
+      >
+
+        <label for="holidayNameInput">
+          Holiday name
+        </label>
+
+        <input
+          id="holidayNameInput"
+          type="text"
+          placeholder="e.g. Diwali"
+        />
+
+      </div>
+
+      <div
+        id="popupFeedback"
+        class="popup-feedback"
+      ></div>
+
+      <div class="popup-actions">
+
+        <button
+          id="savePopup"
+          type="button"
+        >
+          Save
+        </button>
+
+        <button
+          id="cancelPopup"
+          type="button"
+        >
+          Cancel
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+</html>

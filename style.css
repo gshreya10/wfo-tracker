@@ -1,8 +1,42 @@
+html {
+  min-height: 100%;
+  background: #f3eee7;
+}
+
 body {
+  --page-bg: #f3eee7;
+  --panel-bg: #fffaf3;
+  --panel-border: #eadfd2;
+  --wfh-color: #f7c7ce;
+  --wfo-color: #c2e8d2;
+  --leave-color: #c7daf1;
+  --holiday-color: #d2d8df;
+  --workcation-color: #d9edb8;
+  --status-text: #27313a;
+  --muted-status-text: #3d4852;
+
   font-family: Arial, sans-serif;
-  background: #f5f5f5;
+  background:
+    linear-gradient(
+      180deg,
+      #faf6f0 0%,
+      var(--page-bg) 42%,
+      #eee8df 100%
+    );
   margin: 0;
-  padding: 20px;
+  padding:
+    max(20px, env(safe-area-inset-top))
+    max(20px, env(safe-area-inset-right))
+    max(20px, env(safe-area-inset-bottom))
+    max(20px, env(safe-area-inset-left));
+  color: #1f252b;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 .container {
@@ -19,15 +53,589 @@ button {
   border: none;
   border-radius: 10px;
   cursor: pointer;
+  font: inherit;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .stats-card {
-  background: white;
+  background: var(--panel-bg);
+  padding: 22px;
+  border-radius: 16px;
+  margin-top: 20px;
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 14px 34px rgba(91, 72, 52, 0.08);
+}
+
+.projection-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.projection-label {
+  margin: 0 0 4px;
+  color: #6b6258;
+  font-size: 14px;
+}
+
+#projectionStatus {
+  margin: 0;
+  font-size: 28px;
+}
+
+.projection-percent {
+  font-size: 34px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.progress-track {
+  height: 14px;
+  margin-top: 18px;
+  border-radius: 999px;
+  background: #eadfd2;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  transition: width 0.25s ease;
+}
+
+.progress-fill.on-track {
+  background: #85cf9f;
+}
+
+.progress-fill.behind {
+  background: #e88f9b;
+}
+
+.target-marker {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  left: 60%;
+  width: 3px;
+  background: #2f363d;
+  border-radius: 999px;
+}
+
+#projectionMessage {
+  margin-top: 12px;
+  color: #4f473f;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.stat-tile {
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.stat-tile span {
+  display: block;
+  min-height: 34px;
+  color: #6b6258;
+  font-size: 13px;
+}
+
+.stat-tile b {
+  display: block;
+  margin-top: 6px;
+  font-size: 22px;
+}
+
+.login-state {
+  background: var(--panel-bg);
   padding: 20px;
   border-radius: 16px;
   margin-top: 20px;
+  text-align: center;
+  color: #555;
+  border: 1px solid var(--panel-border);
 }
 
 .hidden {
   display: none;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.logout-button {
+  display: block;
+  margin: 24px auto 0;
+  background: #ededed;
+  color: #222;
+}
+
+#calendar {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  background: rgba(255, 250, 243, 0.72);
+  border: 1px solid var(--panel-border);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 18px 46px rgba(91, 72, 52, 0.08);
+}
+
+.day-name {
+  font-weight: bold;
+  text-align: center;
+  color: #3d3933;
+}
+
+.day {
+  background: white;
+  min-height: 100px;
+  border-radius: 14px;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.75) inset;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.day:hover {
+  transform: scale(1.03);
+}
+
+.date-number {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.today {
+  border: 3px solid black;
+}
+
+.weekend {
+  background: var(--holiday-color);
+  color: var(--muted-status-text);
+}
+
+.WFH {
+  background: var(--wfh-color);
+  color: var(--status-text);
+}
+
+.HOLIDAY {
+  background: var(--holiday-color);
+  color: var(--muted-status-text);
+}
+
+.WFO {
+  background: var(--wfo-color);
+  color: var(--status-text);
+}
+
+.WORKCATION {
+  background: var(--workcation-color);
+  color: var(--status-text);
+}
+
+.LEAVE_1 {
+  background: var(--leave-color);
+  color: var(--status-text);
+}
+
+.LEAVE_0_5_WFO {
+  background:
+    linear-gradient(
+      to bottom,
+      var(--leave-color) 50%,
+      var(--wfo-color) 50%
+    );
+
+  color: var(--status-text);
+}
+
+.LEAVE_0_5_WFH {
+  background:
+    linear-gradient(
+      to bottom,
+      var(--leave-color) 50%,
+      var(--wfh-color) 50%
+    );
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  min-height: 100%;
+  min-height: 100dvh;
+
+  background: rgba(0,0,0,0.4);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 18px;
+  box-sizing: border-box;
+
+  z-index: 1000;
+}
+
+.popup-overlay.hidden {
+  display: none;
+}
+
+.popup {
+  background: white;
+  padding: 22px;
+  border-radius: 14px;
+  width: min(420px, 100%);
+  max-height: calc(100dvh - 36px);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.22);
+  box-sizing: border-box;
+  position: relative;
+}
+
+.popup h3 {
+  margin-top: 0;
+  margin-bottom: 4px;
+  padding-right: 44px;
+}
+
+#popupDate {
+  color: #555;
+  margin: 0 0 16px;
+}
+
+.popup-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  background: #f1f1f1;
+  color: #333;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.status-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.status-option {
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: #fafafa;
+  color: #222;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.status-option[data-status=""] {
+  background: var(--wfh-color);
+  color: var(--status-text);
+}
+
+.status-option[data-status="WFO"] {
+  background: var(--wfo-color);
+  color: var(--status-text);
+}
+
+.status-option[data-status="WORKCATION"] {
+  background: var(--workcation-color);
+  color: var(--status-text);
+}
+
+.status-option[data-status="LEAVE_1"] {
+  background: var(--leave-color);
+  color: var(--status-text);
+}
+
+.status-option[data-status="LEAVE_0.5_WFO"] {
+  background:
+    linear-gradient(
+      to bottom,
+      var(--leave-color) 50%,
+      var(--wfo-color) 50%
+    );
+  color: var(--status-text);
+}
+
+.status-option[data-status="LEAVE_0.5_WFH"] {
+  background:
+    linear-gradient(
+      to bottom,
+      var(--leave-color) 50%,
+      var(--wfh-color) 50%
+    );
+  color: var(--status-text);
+}
+
+.status-option[data-status="HOLIDAY"] {
+  background: var(--holiday-color);
+  color: var(--muted-status-text);
+}
+
+.status-option.selected {
+  border-color: #111;
+  box-shadow: 0 0 0 2px white inset;
+}
+
+.holiday-name-field {
+  margin-top: 14px;
+}
+
+.holiday-name-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.holiday-name-field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font: inherit;
+}
+
+.popup-feedback {
+  min-height: 20px;
+  margin-top: 12px;
+  color: #b00020;
+  font-size: 14px;
+}
+
+.popup-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.popup-actions button {
+  flex: 1;
+}
+
+#savePopup {
+  background: #111;
+  color: white;
+}
+
+#savePopup:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+#cancelPopup {
+  background: #ededed;
+  color: #222;
+}
+
+.status-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+  width: 100%;
+  padding: 0 6px;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+}
+
+.split-status {
+  position: absolute;
+  inset: 0;
+  transform: none;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+  line-height: 1;
+}
+
+.split-label-top,
+.split-label-bottom {
+  width: 100%;
+  text-align: center;
+}
+
+.LEAVE_0_5_WFH .split-label-bottom {
+  color: var(--status-text);
+}
+
+@media (max-width: 640px) {
+
+  body {
+    padding:
+      max(12px, env(safe-area-inset-top))
+      max(12px, env(safe-area-inset-right))
+      max(12px, env(safe-area-inset-bottom))
+      max(12px, env(safe-area-inset-left));
+  }
+
+  h1 {
+    font-size: 26px;
+    margin: 8px 0 16px;
+  }
+
+  .stats-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .projection-percent {
+    font-size: 28px;
+  }
+
+  #projectionStatus {
+    font-size: 24px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stat-tile span {
+    min-height: auto;
+  }
+
+  .calendar-header {
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  .calendar-header h2 {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .calendar-header button {
+    min-width: 44px;
+    padding: 10px 12px;
+  }
+
+  #calendar {
+    gap: 5px;
+    margin-top: 14px;
+    padding: 10px;
+    border-radius: 14px;
+  }
+
+  .day-name {
+    font-size: 12px;
+  }
+
+  .day {
+    min-height: clamp(48px, 13vw, 58px);
+    border-radius: 8px;
+    padding: 6px;
+  }
+
+  .day:hover {
+    transform: none;
+  }
+
+  .date-number {
+    font-size: 12px;
+  }
+
+  .status-label {
+    font-size: 10px;
+    line-height: 1.1;
+  }
+
+  .today {
+    border-width: 2px;
+  }
+
+  .popup-overlay {
+    align-items: flex-end;
+    padding: 10px;
+  }
+
+  .popup {
+    border-radius: 16px 16px 10px 10px;
+    padding: 18px;
+  }
+
+  .status-options {
+    grid-template-columns: 1fr;
+  }
+
+  .status-option {
+    min-height: 46px;
+  }
+}
+
+@media (max-width: 360px) {
+
+  body {
+    padding:
+      max(6px, env(safe-area-inset-top))
+      max(6px, env(safe-area-inset-right))
+      max(6px, env(safe-area-inset-bottom))
+      max(6px, env(safe-area-inset-left));
+  }
+
+  #calendar {
+    gap: 3px;
+    padding: 6px;
+  }
+
+  .day {
+    min-height: 46px;
+    padding: 4px;
+  }
+
+  .status-label {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 420px) {
+
+  .projection-header {
+    display: block;
+  }
+
+  .projection-percent {
+    margin-top: 10px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 }

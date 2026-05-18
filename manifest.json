@@ -1,0 +1,18 @@
+{
+  "name": "WFO Tracker",
+  "short_name": "WFO Tracker",
+  "description": "Track Office, Home, Leave, Holidays, and Workcation days.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3eee7",
+  "theme_color": "#f3eee7",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
