@@ -6,11 +6,19 @@ const SCOPES =
 const AUTO_LOGIN_KEY =
   "wfoTrackerAutoLogin";
 
+const ACCESS_TOKEN_KEY =
+  "wfoTrackerAccessToken";
+
+const ACCESS_TOKEN_EXPIRES_AT_KEY =
+  "wfoTrackerAccessTokenExpiresAt";
+
 let tokenClient;
 let gapiInited = false;
 let gisInited = false;
 let autoLoginAttempted = false;
 let silentAuthInProgress = false;
+let cachedSessionAttempted = false;
+let sessionRestored = false;
 
 let currentDate = new Date();
 
@@ -62,9 +70,6 @@ const popupFeedbackEl =
   document.getElementById("popupFeedback");
 
 // Save button removed - auto-save enabled
-const savePopupEl =
-  document.getElementById("savePopup") || {};
-
 const popupCloseEl =
   document.getElementById("closePopup");
 
@@ -105,6 +110,8 @@ async function initializeGapiClient() {
 
   gapiInited = true;
 
+  tryRestoreCachedSession();
+
   maybeAutoLogin();
 }
 
@@ -144,6 +151,7 @@ function gisLoaded() {
 
         if (response.access_token) {
           gapi.client.setToken(response);
+          persistAccessToken(response);
         }
 
         localStorage.setItem(
@@ -153,10 +161,11 @@ function gisLoaded() {
 
         try {
           await listCalendars();
+          sessionRestored = true;
         } catch (error) {
           console.error("Failed to load calendars:", error);
           loginStateEl.innerText = "Failed to load calendars. Please try again.";
-          localStorage.removeItem(AUTO_LOGIN_KEY);
+          clearPersistedAccessToken();
           showLoginApp();
         }
       },
@@ -197,6 +206,7 @@ function maybeAutoLogin() {
     !gapiInited ||
     !gisInited ||
     autoLoginAttempted ||
+    sessionRestored ||
     localStorage.getItem(AUTO_LOGIN_KEY) !== "true"
   ) {
     return;
@@ -211,6 +221,111 @@ function maybeAutoLogin() {
   tokenClient.requestAccessToken({
     prompt: "",
   });
+}
+
+function persistAccessToken(response) {
+
+  if (!response.access_token) {
+    return;
+  }
+
+  localStorage.setItem(
+    ACCESS_TOKEN_KEY,
+    response.access_token
+  );
+
+  const expiresInSeconds =
+    Number(response.expires_in || 0);
+
+  if (expiresInSeconds > 0) {
+
+    localStorage.setItem(
+      ACCESS_TOKEN_EXPIRES_AT_KEY,
+      String(Date.now() + expiresInSeconds * 1000)
+    );
+
+    return;
+  }
+
+  localStorage.removeItem(
+    ACCESS_TOKEN_EXPIRES_AT_KEY
+  );
+}
+
+function clearPersistedAccessToken() {
+
+  localStorage.removeItem(
+    ACCESS_TOKEN_KEY
+  );
+
+  localStorage.removeItem(
+    ACCESS_TOKEN_EXPIRES_AT_KEY
+  );
+}
+
+function getPersistedAccessToken() {
+
+  const accessToken =
+    localStorage.getItem(ACCESS_TOKEN_KEY);
+
+  if (!accessToken) {
+    return null;
+  }
+
+  const expiresAt =
+    Number(
+      localStorage.getItem(
+        ACCESS_TOKEN_EXPIRES_AT_KEY
+      ) || "0"
+    );
+
+  if (expiresAt > 0 && Date.now() >= expiresAt - 60 * 1000) {
+    clearPersistedAccessToken();
+    return null;
+  }
+
+  return accessToken;
+}
+
+async function tryRestoreCachedSession() {
+
+  if (
+    !gapiInited ||
+    cachedSessionAttempted ||
+    sessionRestored ||
+    localStorage.getItem(AUTO_LOGIN_KEY) !== "true"
+  ) {
+    return;
+  }
+
+  cachedSessionAttempted = true;
+
+  const accessToken =
+    getPersistedAccessToken();
+
+  if (!accessToken) {
+    return;
+  }
+
+  loginStateEl.innerText =
+    "Restoring your session...";
+
+  gapi.client.setToken({
+    access_token: accessToken,
+  });
+
+  try {
+    await listCalendars();
+    sessionRestored = true;
+  } catch (error) {
+    console.error(
+      "Cached session restore failed:",
+      error
+    );
+
+    clearPersistedAccessToken();
+    showLoginApp();
+  }
 }
 
 function getDateString(date) {
@@ -256,76 +371,6 @@ function getDisplayDate(dateString) {
       day: "numeric",
       year: "numeric",
     });
-}
-
-function isCompactCalendarLayout() {
-
-  return window.matchMedia("(max-width: 480px)").matches;
-}
-
-function getCalendarStatusLabel(displayStatus, eventStatus) {
-
-  const compactLayout =
-    isCompactCalendarLayout();
-
-  if (displayStatus === "WFH") {
-    return compactLayout ? "WFH" : "Home";
-  }
-
-  if (displayStatus === "WFO") {
-    return compactLayout ? "WFO" : "Office";
-  }
-
-  if (displayStatus === "WORKCATION") {
-    return compactLayout ? "WC" : "Workcation";
-  }
-
-  if (displayStatus === "HOLIDAY") {
-
-    const holidayName =
-      getHolidayName(eventStatus);
-
-    if (!holidayName) {
-      return compactLayout ? "H" : "Holiday";
-    }
-
-    return compactLayout ? "H" : holidayName;
-  }
-
-  if (displayStatus === "LEAVE_1") {
-    return compactLayout ? "L" : "Leave";
-  }
-
-  return "";
-}
-
-function getCalendarStatusAriaLabel(displayStatus, eventStatus) {
-
-  if (displayStatus === "WFH") {
-    return "Home";
-  }
-
-  if (displayStatus === "WFO") {
-    return "Office";
-  }
-
-  if (displayStatus === "WORKCATION") {
-    return "Workcation";
-  }
-
-  if (displayStatus === "HOLIDAY") {
-
-    const holidayName =
-      getHolidayName(eventStatus);
-
-    return holidayName || "Holiday";
-  }
-
-  if (displayStatus === "LEAVE_1") {
-    return "Leave";
-  }
-
-  return "";
 }
 
 function isCompactCalendarLayout() {
@@ -506,10 +551,13 @@ function logout() {
 
   localStorage.removeItem("trackerCalendarId");
   localStorage.removeItem(AUTO_LOGIN_KEY);
+  clearPersistedAccessToken();
   calendarData = {};
   calendarEventIds = {};
   autoLoginAttempted = false;
   silentAuthInProgress = false;
+  cachedSessionAttempted = false;
+  sessionRestored = false;
 
   showLoginApp();
 }
