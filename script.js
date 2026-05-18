@@ -258,6 +258,76 @@ function getDisplayDate(dateString) {
     });
 }
 
+function isCompactCalendarLayout() {
+
+  return window.matchMedia("(max-width: 480px)").matches;
+}
+
+function getCalendarStatusLabel(displayStatus, eventStatus) {
+
+  const compactLayout =
+    isCompactCalendarLayout();
+
+  if (displayStatus === "WFH") {
+    return compactLayout ? "WFH" : "Home";
+  }
+
+  if (displayStatus === "WFO") {
+    return compactLayout ? "WFO" : "Office";
+  }
+
+  if (displayStatus === "WORKCATION") {
+    return compactLayout ? "WC" : "Workcation";
+  }
+
+  if (displayStatus === "HOLIDAY") {
+
+    const holidayName =
+      getHolidayName(eventStatus);
+
+    if (!holidayName) {
+      return compactLayout ? "H" : "Holiday";
+    }
+
+    return compactLayout ? "H" : holidayName;
+  }
+
+  if (displayStatus === "LEAVE_1") {
+    return compactLayout ? "L" : "Leave";
+  }
+
+  return "";
+}
+
+function getCalendarStatusAriaLabel(displayStatus, eventStatus) {
+
+  if (displayStatus === "WFH") {
+    return "Home";
+  }
+
+  if (displayStatus === "WFO") {
+    return "Office";
+  }
+
+  if (displayStatus === "WORKCATION") {
+    return "Workcation";
+  }
+
+  if (displayStatus === "HOLIDAY") {
+
+    const holidayName =
+      getHolidayName(eventStatus);
+
+    return holidayName || "Holiday";
+  }
+
+  if (displayStatus === "LEAVE_1") {
+    return "Leave";
+  }
+
+  return "";
+}
+
 function getStatusType(status) {
 
   if (!status) return "";
@@ -572,29 +642,34 @@ function renderCalendar() {
 
       label.classList.add("status-label");
 
+      label.setAttribute(
+        "aria-label",
+        getCalendarStatusAriaLabel(displayStatus, eventStatus)
+      );
+
       if (displayStatus === "WFH") {
-        label.innerText = "Home";
+        label.innerText =
+          getCalendarStatusLabel(displayStatus, eventStatus);
       }
 
       else if (displayStatus === "WFO") {
-        label.innerText = "Office";
+        label.innerText =
+          getCalendarStatusLabel(displayStatus, eventStatus);
       }
 
       else if (displayStatus === "WORKCATION") {
-        label.innerText = "Workcation";
+        label.innerText =
+          getCalendarStatusLabel(displayStatus, eventStatus);
       }
 
       else if (displayStatus === "HOLIDAY") {
-
-        const holidayName =
-          getHolidayName(eventStatus);
-
         label.innerText =
-          holidayName || "Holiday";
+          getCalendarStatusLabel(displayStatus, eventStatus);
       }
 
       else if (displayStatus === "LEAVE_1") {
-        label.innerText = "Leave";
+        label.innerText =
+          getCalendarStatusLabel(displayStatus, eventStatus);
       }
 
       else if (displayStatus === "LEAVE_0.5_WFO") {
