@@ -60,6 +60,22 @@ body {
   margin-inline: auto;
 }
 
+.legal-links {
+  margin: var(--space-3) 0 var(--space-1);
+  text-align: center;
+  color: #5f574e;
+  font-size: clamp(0.78rem, 0.45vw + 0.68rem, 0.92rem);
+}
+
+.legal-links a {
+  color: #3f3830;
+  text-decoration: none;
+}
+
+.legal-links a:hover {
+  text-decoration: underline;
+}
+
 h1 {
   text-align: center;
   font-size: clamp(1.45rem, 2.2vw + 0.8rem, 2.1rem);
