@@ -508,12 +508,17 @@ button {
 
   h1 {
     font-size: 26px;
-    margin: 8px 0 16px;
+    margin: 10px 0 18px;
   }
 
   .stats-card {
-    padding: 16px;
-    border-radius: 12px;
+    padding: 18px;
+    border-radius: 14px;
+    margin-top: 20px;
+  }
+
+  .projection-label {
+    font-size: 13px;
   }
 
   .projection-percent {
@@ -521,30 +526,50 @@ button {
   }
 
   #projectionStatus {
-    font-size: 24px;
+    font-size: 22px;
+  }
+
+  .progress-track {
+    margin-top: 12px;
+    height: 14px;
   }
 
   .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .stat-tile {
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .stat-tile p {
+    font-size: 12px;
+    margin-bottom: 6px;
   }
 
   .stat-tile span {
+    font-size: 18px;
     min-height: auto;
   }
 
   .calendar-header {
     gap: 10px;
-    margin-top: 22px;
+    margin-top: 20px;
   }
 
   .calendar-header h2 {
-    font-size: 20px;
+    font-size: 18px;
     text-align: center;
+    flex: 1;
   }
 
   .calendar-header button {
     min-width: 44px;
     padding: 10px 12px;
+    font-size: 16px;
   }
 
   #calendar {
@@ -556,12 +581,18 @@ button {
 
   .day-name {
     font-size: 12px;
+    font-weight: 600;
+    height: 24px;
   }
 
   .day {
-    min-height: clamp(48px, 13vw, 58px);
+    min-height: clamp(50px, 13vw, 60px);
     border-radius: 8px;
     padding: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   .day:hover {
@@ -570,11 +601,13 @@ button {
 
   .date-number {
     font-size: 12px;
+    font-weight: 600;
   }
 
   .status-label {
-    font-size: 10px;
+    font-size: 9px;
     line-height: 1.1;
+    margin-top: 1px;
   }
 
   .today {
@@ -589,16 +622,31 @@ button {
   .popup {
     border-radius: 16px 16px 10px 10px;
     padding: 18px;
+    width: 100%;
+  }
+
+  .popup h3 {
+    font-size: 16px;
   }
 
   .status-options {
     grid-template-columns: 1fr;
+    gap: 10px;
+    margin: 14px 0;
   }
 
   .status-option {
-    min-height: 46px;
+    min-height: 44px;
+    font-size: 14px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 12px 20px;
+    min-height: 44px;
   }
 }
+
 
 @media (max-width: 360px) {
 
@@ -626,16 +674,19 @@ button {
 }
 
 @media (max-width: 420px) {
+  /* Maintain desktop layout with scaled fonts */
+}
 
-  .projection-header {
-    display: block;
+/* Global scale for small screens: keep layout identical, only reduce size */
+@media (max-width: 640px) {
+  .container {
+    transform: scale(0.92);
+    transform-origin: top center;
+    max-width: 900px;
   }
 
-  .projection-percent {
-    margin-top: 10px;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
+  /* Prevent horizontal scroll from scaled container */
+  body {
+    overflow-x: hidden;
   }
 }

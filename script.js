@@ -61,8 +61,9 @@ const holidayNameInputEl =
 const popupFeedbackEl =
   document.getElementById("popupFeedback");
 
+// Save button removed - auto-save enabled
 const savePopupEl =
-  document.getElementById("savePopup");
+  document.getElementById("savePopup") || {};
 
 const popupCloseEl =
   document.getElementById("closePopup");
@@ -134,6 +135,8 @@ function gisLoaded() {
           }
 
           console.error(response);
+          loginStateEl.innerText = "Login failed: " + (response.error || "Unknown error");
+          showLoginApp();
           return;
         }
 
@@ -148,7 +151,14 @@ function gisLoaded() {
           "true"
         );
 
-        await listCalendars();
+        try {
+          await listCalendars();
+        } catch (error) {
+          console.error("Failed to load calendars:", error);
+          loginStateEl.innerText = "Failed to load calendars. Please try again.";
+          localStorage.removeItem(AUTO_LOGIN_KEY);
+          showLoginApp();
+        }
       },
     });
 
@@ -171,8 +181,14 @@ function handleCredentialResponse() {
   }
 
   silentAuthInProgress = false;
+  loginStateEl.innerText = "Signing in...";
 
-  tokenClient.requestAccessToken();
+  try {
+    tokenClient.requestAccessToken();
+  } catch (error) {
+    console.error("Sign-in error:", error);
+    loginStateEl.innerText = "Sign-in failed. Please try again.";
+  }
 }
 
 function maybeAutoLogin() {
@@ -316,8 +332,6 @@ function closePopup() {
   popupFeedbackEl.innerText = "";
   holidayNameInputEl.value = "";
   holidayNameFieldEl.classList.add("hidden");
-  savePopupEl.disabled = false;
-  savePopupEl.innerText = "Save";
 }
 
 function showTrackerApp() {
@@ -834,8 +848,10 @@ function openPopup(dateString) {
 
 statusOptionEls.forEach((optionEl) => {
 
-  optionEl.onclick = () =>
+  optionEl.onclick = async () => {
     setPopupStatus(optionEl.dataset.status);
+    await saveEventForSelectedDate();
+  };
 });
 
 popupCloseEl.onclick =
@@ -864,84 +880,83 @@ document.onkeydown = (event) => {
   }
 };
 
-savePopupEl
-  .onclick = async () => {
+async function saveEventForSelectedDate() {
 
-    const value =
-      statusSelectEl.value;
+  const value = statusSelectEl.value;
 
-    const summary =
-      value === "HOLIDAY"
-        ? getHolidaySummary()
-        : value;
+  const summary =
+    value === "HOLIDAY"
+      ? getHolidaySummary()
+      : value;
 
-    const calendarId =
-      localStorage.getItem("trackerCalendarId");
+  const calendarId =
+    localStorage.getItem("trackerCalendarId");
 
-    if (!calendarId) {
-      popupFeedbackEl.innerText =
-        "Sign in with Google before saving.";
-      return;
+  if (!calendarId) {
+    popupFeedbackEl.innerText =
+      "Sign in with Google before saving.";
+    return;
+  }
+
+  if (!selectedDate) return;
+
+  popupFeedbackEl.innerText = "Saving...";
+
+  try {
+
+    const existingEventId =
+      calendarEventIds[selectedDate];
+
+    if (existingEventId) {
+
+      await gapi.client.calendar.events.delete({
+
+        calendarId,
+
+        eventId: existingEventId,
+      });
     }
 
-    if (!selectedDate) return;
+    if (summary !== "") {
 
-    savePopupEl.disabled = true;
-    savePopupEl.innerText = "Saving...";
-    popupFeedbackEl.innerText = "";
+      await gapi.client.calendar.events.insert({
 
-    try {
+        calendarId,
 
-      const existingEventId =
-        calendarEventIds[selectedDate];
+        resource: {
 
-      if (existingEventId) {
+          summary,
 
-        await gapi.client.calendar.events.delete({
-
-          calendarId,
-
-          eventId: existingEventId,
-        });
-      }
-
-      if (summary !== "") {
-
-        await gapi.client.calendar.events.insert({
-
-          calendarId,
-
-          resource: {
-
-            summary,
-
-            start: {
-              date: selectedDate,
-            },
-
-            end: {
-              date: addDaysToDateString(selectedDate, 1),
-            },
+          start: {
+            date: selectedDate,
           },
-        });
-      }
 
+          end: {
+            date: addDaysToDateString(selectedDate, 1),
+          },
+        },
+      });
+    }
+
+    popupFeedbackEl.innerText = "Saved!";
+    setTimeout(() => {
       closePopup();
+    }, 300);
 
-      await loadCalendarEvents();
-    }
+    await loadCalendarEvents();
+  }
 
-    catch (error) {
+  catch (error) {
 
-      console.error(error);
+    console.error(error);
 
-      popupFeedbackEl.innerText =
-        "Could not save. Please try again.";
+    popupFeedbackEl.innerText =
+      "Could not save. Please try again.";
+  }
+}
 
-      savePopupEl.disabled = false;
-      savePopupEl.innerText = "Save";
-    }
-  };
+// Auto-save enabled - Save button removed
+// Old onclick handler no longer needed
 
 document
   .getElementById("prevMonth")
@@ -964,3 +979,9 @@ document
 
     await loadCalendarEvents();
   };
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").catch((error) => {
+    console.warn("Service Worker registration failed:", error);
+  });
+}
