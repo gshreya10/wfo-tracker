@@ -101,6 +101,35 @@ button {
   box-shadow: 0 14px 34px rgba(91, 72, 52, 0.08);
 }
 
+.public-info {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-lg);
+  padding: clamp(0.875rem, 2.2vw, 1.25rem);
+  margin-top: var(--space-2);
+  color: #3e372f;
+}
+
+.public-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1rem, 1vw + 0.8rem, 1.35rem);
+}
+
+.public-info p {
+  margin: 0.45rem 0;
+  font-size: clamp(0.82rem, 0.45vw + 0.72rem, 0.95rem);
+}
+
+.public-info ul {
+  margin: 0.5rem 0 0.5rem 1rem;
+  padding: 0;
+}
+
+.public-info li {
+  margin: 0.25rem 0;
+  font-size: clamp(0.8rem, 0.4vw + 0.7rem, 0.92rem);
+}
+
 .projection-header {
   display: flex;
   justify-content: space-between;
