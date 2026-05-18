@@ -1,0 +1,33 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+}
+
+button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.stats-card {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  margin-top: 20px;
+}
+
+.hidden {
+  display: none;
+}
