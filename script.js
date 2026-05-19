@@ -39,6 +39,12 @@ const monthYearEl =
 const loginStateEl =
   document.getElementById("loginState");
 
+const loginPanelEl =
+  document.getElementById("loginPanel");
+
+const publicInfoEl =
+  document.querySelector(".public-info");
+
 const googleSignInEl =
   document.getElementById("googleSignIn");
 
@@ -526,18 +532,36 @@ function closePopup() {
 
 function showTrackerApp() {
 
-  loginStateEl.classList.add("hidden");
-  googleSignInEl.classList.add("hidden");
+  loginPanelEl.classList.add("hidden");
   trackerAppEl.classList.remove("hidden");
+
+  if (publicInfoEl) {
+    publicInfoEl.classList.add("hidden");
+  }
 }
 
 function showLoginApp() {
 
   trackerAppEl.classList.add("hidden");
-  googleSignInEl.classList.remove("hidden");
-  loginStateEl.classList.remove("hidden");
+  loginPanelEl.classList.remove("hidden");
+
+  if (publicInfoEl) {
+    publicInfoEl.classList.remove("hidden");
+  }
+
   loginStateEl.innerText =
     "Sign in to load your private WFO calendar and projection.";
+}
+
+function isWeekendDateString(dateString) {
+
+  const date =
+    getLocalDateFromString(dateString);
+
+  const weekday =
+    date.getDay();
+
+  return weekday === 0 || weekday === 6;
 }
 
 function logout() {
@@ -828,8 +852,10 @@ function renderCalendar() {
       dayEl.appendChild(label);
     }
 
-    dayEl.onclick = () =>
-      openPopup(dateString);
+    if (weekday !== 0 && weekday !== 6) {
+      dayEl.onclick = () =>
+        openPopup(dateString);
+    }
 
     calendarEl.appendChild(dayEl);
   }
@@ -1028,6 +1054,10 @@ function calculateStats() {
 
 function openPopup(dateString) {
 
+  if (isWeekendDateString(dateString)) {
+    return;
+  }
+
   selectedDate = dateString;
 
   popupDateEl.innerText =
@@ -1079,6 +1109,12 @@ document.onkeydown = (event) => {
 };
 
 async function saveEventForSelectedDate() {
+
+  if (selectedDate && isWeekendDateString(selectedDate)) {
+    popupFeedbackEl.innerText =
+      "Weekend entries are read-only.";
+    return;
+  }
 
   const value = statusSelectEl.value;
 

@@ -65,6 +65,16 @@ body {
   padding-bottom: clamp(7rem, 16vh, 9.5rem);
 }
 
+.login-panel {
+  background: var(--panel-bg);
+  padding: clamp(0.875rem, 2.2vw, 1.25rem);
+  border-radius: var(--radius-lg);
+  margin-top: var(--space-4);
+  text-align: center;
+  color: #555;
+  border: 1px solid var(--panel-border);
+}
+
 .legal-links {
   position: fixed;
   left: 0;
@@ -248,13 +258,23 @@ button {
 }
 
 .login-state {
-  background: var(--panel-bg);
-  padding: clamp(0.875rem, 2.2vw, 1.25rem);
-  border-radius: var(--radius-lg);
-  margin-top: var(--space-4);
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  margin-top: 0;
+  margin-bottom: var(--space-2);
   text-align: center;
   color: #555;
-  border: 1px solid var(--panel-border);
+  border: none;
+}
+
+#googleSignIn {
+  display: flex;
+  justify-content: center;
+}
+
+#googleSignIn > div {
+  margin-inline: auto;
 }
 
 .hidden {
@@ -722,8 +742,11 @@ button {
     aspect-ratio: 1 / 1;
     min-height: 50px;
     border-radius: 7px;
-    padding: 16px 3px 4px;
+    padding: 0;
     min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .day:hover {
@@ -731,22 +754,17 @@ button {
   }
 
   .date-number {
-    font-size: 10px;
-    font-weight: 600;
-    position: absolute;
-    top: 4px;
-    left: 5px;
+    font-size: clamp(14px, 3.6vw, 18px);
+    font-weight: 700;
+    position: static;
+    top: auto;
+    left: auto;
     line-height: 1;
     z-index: 1;
   }
 
   .status-label {
-    font-size: clamp(7px, 2.05vw, 9px);
-    line-height: 1.05;
-    top: 50%;
-    bottom: auto;
-    transform: translate(-50%, -50%);
-    padding: 0 2px;
+    display: none;
   }
 
   .today {
@@ -823,20 +841,13 @@ button {
 
   .day {
     min-height: 46px;
-    padding: 15px 2px 3px;
+    padding: 0;
   }
 
   .date-number {
-    font-size: 9px;
-    top: 3px;
-    left: 4px;
-  }
-
-  .status-label {
-    font-size: 7px;
-    top: 50%;
-    bottom: auto;
-    transform: translate(-50%, -50%);
+    font-size: clamp(13px, 3.8vw, 16px);
+    top: auto;
+    left: auto;
   }
 }
 
@@ -880,9 +891,6 @@ button {
   }
 
   .status-label {
-    font-size: 6.5px;
-    top: 50%;
-    bottom: auto;
-    transform: translate(-50%, -50%);
+    display: none;
   }
 }
